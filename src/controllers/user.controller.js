@@ -14,10 +14,25 @@ const getUsers = async (req, res) => {
     }  
 };
 
+const getUserById = async (req, res) => {
+
+    try {
+        console.log(req.params);
+        const { id } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id_usuario, primer_nombre, primer_apellido FROM usuarios WHERE id_usuario = ?", id);
+        res.json(result);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+
+// POST function
 const addUser = async (req, res) => {
 
     try {
-        console.log(req.body);
 
         const connection = await getConnection();
         
@@ -28,7 +43,11 @@ const addUser = async (req, res) => {
     }
 };
 
+
+
+
 export const methods = {
     getUsers,
+    getUserById,
     addUser
 };

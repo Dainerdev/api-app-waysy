@@ -33,10 +33,27 @@ const getUserById = async (req, res) => {
 const addUser = async (req, res) => {
 
     try {
+        const { id_usuario, tipo_identificacion, contrasena, repetir_contrasena, 
+            pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
+            primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
+            ciudad } = req.body;
 
+        if (id_usuario === undefined || tipo_identificacion === undefined || contrasena === undefined || repetir_contrasena === undefined ||
+            pregunta_recuperacion === undefined || respuesta_recuperacion === undefined || primer_nombre === undefined || segundo_nombre === undefined ||
+            primer_apellido === undefined || segundo_apellido === undefined || genero === undefined || email === undefined || telefono === undefined ||
+            foto === undefined || rol === undefined || pais === undefined || ciudad === undefined) {
+            
+            res.status(400).json({message: "Bad Request. Please fill all fields."});
+        }
+
+        const usuario = { id_usuario, tipo_identificacion, contrasena, repetir_contrasena, 
+            pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
+            primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
+            ciudad };
+            
         const connection = await getConnection();
-        
-        res.json("addUser")
+        await connection.query("INSERT INTO usuarios SET ?", usuario);        
+        res.json({ message: "User added." });
     } catch(error) {
         res.status(500);
         res.send(error.message);

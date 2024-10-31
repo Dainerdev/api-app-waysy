@@ -13,7 +13,8 @@ app.set("port", 3312);
 app.use(morgan("dev")); // Modulo morgan modo desarrollo
 app.use(express.json()); // Interpretar json
 
+
 // Routes
-app.use("/api/users",userRoutes);
+app.use("/api/users", userRoutes);
 
 export default app;

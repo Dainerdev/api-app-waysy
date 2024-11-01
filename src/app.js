@@ -6,7 +6,7 @@ import userRoutes from "./routes/user.routes";
 import categoryRoutes from "./routes/category.routes";
 import sourceRoutes from "./routes/source.routes";
 import expenseRoutes from "./routes/expense.routes";
-
+import earningRoutes from "./routes/earning.routes";
 
 const app = express();
 
@@ -23,6 +23,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/sources", sourceRoutes);
 app.use("/api/expenses", expenseRoutes);
-
+app.use("/api/earnings", earningRoutes);
 
 export default app;

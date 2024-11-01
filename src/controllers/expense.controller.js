@@ -66,7 +66,7 @@ const updateExpense = async (req, res) => {
             res.status(400).json({message: "Bad Request. Please fill all fields."});     
         }
 
-        const gasto = { id, nombre_gasto, valor_gasto, categoria_id, descripcion };
+        const gasto = { nombre_gasto, valor_gasto, categoria_id, descripcion };
         console.log(gasto);
         
         const connection = await getConnection();

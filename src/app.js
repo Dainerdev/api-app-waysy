@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 
 // Routes imports
 import userRoutes from "./routes/user.routes";
@@ -16,7 +17,7 @@ app.set("port", 3312);
 // Middlewares
 app.use(morgan("dev")); // Modulo morgan modo desarrollo
 app.use(express.json()); // Interpretar json
-
+app.use(cors());
 
 // Routes
 app.use("/api/users", userRoutes);

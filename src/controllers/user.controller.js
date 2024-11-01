@@ -20,7 +20,7 @@ const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
         const connection = await getConnection();
-        const result = await connection.query("SELECT id_usuario, primer_nombre, primer_apellido FROM usuarios WHERE id_usuario = ?", id);
+        const result = await connection.query("SELECT id, primer_nombre, primer_apellido FROM usuarios WHERE id = ?", id);
         res.json(result);
     } catch (error) {
         res.status(500);
@@ -33,12 +33,12 @@ const getUserById = async (req, res) => {
 const addUser = async (req, res) => {
 
     try {
-        const { id_usuario, tipo_identificacion, contrasena, repetir_contrasena, 
+        const { id, tipo_identificacion, contrasena, repetir_contrasena, 
             pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
             primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
             ciudad } = req.body;
 
-        if (id_usuario === undefined || tipo_identificacion === undefined || contrasena === undefined || repetir_contrasena === undefined ||
+        if (id === undefined || tipo_identificacion === undefined || contrasena === undefined || repetir_contrasena === undefined ||
             pregunta_recuperacion === undefined || respuesta_recuperacion === undefined || primer_nombre === undefined || segundo_nombre === undefined ||
             primer_apellido === undefined || segundo_apellido === undefined || genero === undefined || email === undefined || telefono === undefined ||
             foto === undefined || rol === undefined || pais === undefined || ciudad === undefined) {
@@ -46,7 +46,7 @@ const addUser = async (req, res) => {
             res.status(400).json({message: "Bad Request. Please fill all fields."});
         }
 
-        const usuario = { id_usuario, tipo_identificacion, contrasena, repetir_contrasena, 
+        const usuario = { id, tipo_identificacion, contrasena, repetir_contrasena, 
             pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
             primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
             ciudad };
@@ -60,13 +60,47 @@ const addUser = async (req, res) => {
     }
 };
 
+// UPDATE function
+const updateUser = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const { tipo_identificacion, contrasena, repetir_contrasena, 
+            pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
+            primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
+            ciudad } = req.body;
+
+        if (id === undefined || tipo_identificacion === undefined || contrasena === undefined || repetir_contrasena === undefined ||
+            pregunta_recuperacion === undefined || respuesta_recuperacion === undefined || primer_nombre === undefined || segundo_nombre === undefined ||
+            primer_apellido === undefined || segundo_apellido === undefined || genero === undefined || email === undefined || telefono === undefined ||
+            foto === undefined || rol === undefined || pais === undefined || ciudad === undefined) {
+                
+            res.status(400).json({message: "Bad Request. Please fill all fields."});
+        }
+
+        const user = { id, tipo_identificacion, contrasena, repetir_contrasena, 
+            pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
+            primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
+            ciudad };
+
+        const connection = await getConnection();
+        const result = await connection.query("UPDATE usuarios SET ? WHERE id = ?", [user, id]);
+        res.json(result);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
 // DELETE function
 const deleteUser = async (req, res) => {
 
     try {
         const { id } = req.params;
         const connection = await getConnection();
-        const result = await connection.query("DELETE FROM usuarios WHERE id_usuario = ?", id);
+        const result = await connection.query("DELETE FROM usuarios WHERE id = ?", id);
         res.json(result);
     } catch (error) {
         res.status(500);
@@ -79,5 +113,6 @@ export const methods = {
     getUsers,
     getUserById,
     addUser,
+    updateUser,
     deleteUser
 };

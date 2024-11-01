@@ -86,8 +86,8 @@ const updateUser = async (req, res) => {
             ciudad };
 
         const connection = await getConnection();
-        const result = await connection.query("UPDATE usuarios SET ? WHERE id = ?", [user, id]);
-        res.json(result);
+        await connection.query("UPDATE usuarios SET ? WHERE id = ?", [user, id]);
+        res.json({ message: "User updated." });
     } catch (error) {
         res.status(500);
         res.send(error.message);

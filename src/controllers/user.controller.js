@@ -28,6 +28,80 @@ const getUserById = async (req, res) => {
     }
 };
 
+// Get Type Id enum function
+const getTypeId = async (req, res) => {
+
+    try {
+        const connection = await getConnection();
+        const result = await connection.query("SHOW COLUMNS FROM usuarios LIKE 'tipo_identificacion'");
+
+        if (result.length > 0) {
+            const enumValues = result[0].Type;
+
+            const values = enumValues
+                .match(/'([^']+)'/g) 
+                .map(value => value.replace(/'/g, ''));
+            
+            res.json(values);
+        } else {
+            res.status(404).send('Column not found');
+        }
+
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get Gender enum function
+const getGender = async (req, res) => {
+
+    try {
+        const connection = await getConnection();
+        const result = await connection.query("SHOW COLUMNS FROM usuarios LIKE 'genero'");
+
+        if (result.length > 0) {
+            const enumValues = result[0].Type;
+
+            const values = enumValues
+                .match(/'([^']+)'/g) 
+                .map(value => value.replace(/'/g, ''));
+            
+            res.json(values);
+        } else {
+            res.status(404).send('Column not found');
+        }
+
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get Role enum function
+const getRole = async (req, res) => {
+
+    try {
+        const connection = await getConnection();
+        const result = await connection.query("SHOW COLUMNS FROM usuarios LIKE 'rol'");
+
+        if (result.length > 0) {
+            const enumValues = result[0].Type;
+
+            const values = enumValues
+                .match(/'([^']+)'/g) 
+                .map(value => value.replace(/'/g, ''));
+            
+            res.json(values);
+        } else {
+            res.status(404).send('Column not found');
+        }
+
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
 
 // POST function
 const addUser = async (req, res) => {
@@ -112,6 +186,9 @@ const deleteUser = async (req, res) => {
 export const methods = {
     getUsers,
     getUserById,
+    getTypeId,
+    getGender,
+    getRole,
     addUser,
     updateUser,
     deleteUser

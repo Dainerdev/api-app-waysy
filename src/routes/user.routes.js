@@ -4,8 +4,11 @@ import { methods as userController } from "../controllers/user.controller";
 
 const router = Router();
 
-router.get("/", userController.getUsers);
-router.get("/:id", userController.getUserById);
-router.post("/", userController.addUser);
+router.get("/", userController.getUsers); // Find all
+router.get("/:id", userController.getUserById); // Find by id
+router.post("/", userController.addUser); // Add
+
+router.delete("/:id", userController.deleteUser); // Delete
+
 
 export default router;

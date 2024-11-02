@@ -143,9 +143,9 @@ const login = async (req, res) => {
         const result = await  connection.query("SELECT * FROM usuarios WHERE email = ? AND contrasena = ?", [email, contrasena]);
 
         if (result.length > 0) {
-            res.json({ success: true, message: "Successful login." });
+            res.json({ success: true, message: "Incio de sesión exitoso." });
         } else {
-            res.json({ success: false, message: "Incorrect credentials." });
+            res.json({ success: false, message: "Credenciales incorrectas. Inténtalo de nuevo." });
         }
     } catch (error) {
         res.status(500);

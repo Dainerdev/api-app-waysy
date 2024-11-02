@@ -134,6 +134,25 @@ const addUser = async (req, res) => {
     }
 };
 
+// Login Validation
+const login = async (req, res) => {
+    const { email, contrasena } = req.body;
+
+    try {
+        const connection = await getConnection();
+        const result = await  connection.query("SELECT * FROM usuarios WHERE email = ? AND contrasena = ?", [email, contrasena]);
+
+        if (result.length > 0) {
+            res.json({ success: true, message: "Successful login." });
+        } else {
+            res.json({ success: false, message: "Incorrect credentials." });
+        }
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
 // UPDATE function
 const updateUser = async (req, res) => {
 
@@ -190,6 +209,7 @@ export const methods = {
     getGender,
     getRole,
     addUser,
+    login,
     updateUser,
     deleteUser
 };

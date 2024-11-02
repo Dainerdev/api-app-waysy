@@ -20,8 +20,16 @@ const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
         const connection = await getConnection();
-        const result = await connection.query("SELECT id, primer_nombre, primer_apellido FROM usuarios WHERE id = ?", id);
-        res.json(result);
+        const result = await connection.query("SELECT * FROM usuarios WHERE id = ?", [id]);
+        
+        if (result.length > 0) {
+            console.log(result);
+            res.json(result[0]);
+        } else {
+            res.status(400);
+            res.json({ message: "Usuario no encontrado." });
+        }        
+        
     } catch (error) {
         res.status(500);
         res.send(error.message);
@@ -140,10 +148,11 @@ const login = async (req, res) => {
 
     try {
         const connection = await getConnection();
-        const result = await  connection.query("SELECT * FROM usuarios WHERE email = ? AND contrasena = ?", [email, contrasena]);
+        const result = await  connection.query("SELECT id, email, contrasena FROM usuarios WHERE email = ? AND contrasena = ?", [email, contrasena]);
 
         if (result.length > 0) {
-            res.json({ success: true, message: "Incio de sesión exitoso." });
+            const user = result[0];
+            res.json({ success: true, id: user.id, message: "Incio de sesión exitoso."});
         } else {
             res.json({ success: false, message: "Credenciales incorrectas. Inténtalo de nuevo." });
         }
@@ -160,23 +169,21 @@ const updateUser = async (req, res) => {
 
         const { id } = req.params;
 
-        const { tipo_identificacion, contrasena, repetir_contrasena, 
-            pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
-            primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
-            ciudad } = req.body;
+        const { contrasena, repetir_contrasena, 
+            pregunta_recuperacion, respuesta_recuperacion,  
+            email, telefono, foto, pais, ciudad } = req.body;
 
-        if (id === undefined || tipo_identificacion === undefined || contrasena === undefined || repetir_contrasena === undefined ||
-            pregunta_recuperacion === undefined || respuesta_recuperacion === undefined || primer_nombre === undefined || segundo_nombre === undefined ||
-            primer_apellido === undefined || segundo_apellido === undefined || genero === undefined || email === undefined || telefono === undefined ||
-            foto === undefined || rol === undefined || pais === undefined || ciudad === undefined) {
+        if (id === undefined || contrasena === undefined || repetir_contrasena === undefined ||
+            pregunta_recuperacion === undefined || respuesta_recuperacion === undefined || 
+            genero === undefined || email === undefined || telefono === undefined ||
+            foto === undefined || pais === undefined || ciudad === undefined) {
                 
             res.status(400).json({message: "Bad Request. Please fill all fields."});
         }
 
-        const user = { id, tipo_identificacion, contrasena, repetir_contrasena, 
-            pregunta_recuperacion, respuesta_recuperacion, primer_nombre, segundo_nombre, 
-            primer_apellido, segundo_apellido, genero, email, telefono, foto, rol, pais, 
-            ciudad };
+        const user = { contrasena, repetir_contrasena, 
+            pregunta_recuperacion, respuesta_recuperacion,
+            genero, email, telefono, foto, pais, ciudad };
 
         const connection = await getConnection();
         await connection.query("UPDATE usuarios SET ? WHERE id = ?", [user, id]);

@@ -171,11 +171,11 @@ const updateUser = async (req, res) => {
 
         const { contrasena, repetir_contrasena, 
             pregunta_recuperacion, respuesta_recuperacion,  
-            email, telefono, foto, pais, ciudad } = req.body;
+            email, telefono, foto, pais, ciudad } = req.body;  
 
         if (id === undefined || contrasena === undefined || repetir_contrasena === undefined ||
             pregunta_recuperacion === undefined || respuesta_recuperacion === undefined || 
-            genero === undefined || email === undefined || telefono === undefined ||
+            email === undefined || telefono === undefined ||
             foto === undefined || pais === undefined || ciudad === undefined) {
                 
             res.status(400).json({message: "Bad Request. Please fill all fields."});
@@ -183,7 +183,7 @@ const updateUser = async (req, res) => {
 
         const user = { contrasena, repetir_contrasena, 
             pregunta_recuperacion, respuesta_recuperacion,
-            genero, email, telefono, foto, pais, ciudad };
+            email, telefono, foto, pais, ciudad };
 
         const connection = await getConnection();
         await connection.query("UPDATE usuarios SET ? WHERE id = ?", [user, id]);

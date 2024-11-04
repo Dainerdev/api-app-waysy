@@ -29,6 +29,19 @@ const getSourceById = async (req, res) => {
     }
 };
 
+// Get BY NAME function
+const getSourceByName = async (req, res) => {
+    try {
+        const { nombre_fuente } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%m-%Y'), nombre_fuente, descripcion FROM fuentes WHERE nombre_fuente = ?", [nombre_fuente]);
+        res.json(result);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
 // POST function
 const addSource = async (req, res) => {
 
@@ -97,6 +110,7 @@ const deleteSource = async (req, res) => {
 export const methods = {
     getSources,
     getSourceById,
+    getSourceByName,
     addSource,
     updateSource,
     deleteSource

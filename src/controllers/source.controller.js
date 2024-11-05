@@ -79,6 +79,23 @@ const getSourceByDate = async (req, res) => {
     }
 };
 
+// Get max Id function
+const getMaxId = async (req, res) => {
+
+    try {
+        const connection = await getConnection();
+        const result = await connection.query("SELECT MAX(id) AS max_id FROM fuentes");
+
+        if (result.length > 0 && result[0].max_id !== null) {
+            res.json({ max_id: result[0].max_id });   
+        } else {
+            res.json({ max_id: 1 }); 
+        }
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
 // Get BY DESCRIPTION function
 const getSourceByDescription = async (req, res) => {
     try {
@@ -124,14 +141,14 @@ const updateSource = async (req, res) => {
         const { id } = req.params;
 
         const { nombre_fuente, 
-            descripcion, icono } = req.body;
+            descripcion } = req.body;
 
         if (nombre_fuente === undefined || descripcion === undefined) {
             
             res.status(400).json({message: "Bad Request. Please fill all fields."});     
         }
 
-        const source = { id, nombre_fuente, descripcion, icono };
+        const source = { id, nombre_fuente, descripcion };
         console.log(source)
         
         const connection = await getConnection();
@@ -163,6 +180,7 @@ export const methods = {
     getSourceByName,
     getSourceByDate,
     getSourceByDescription,
+    getMaxId,
     addSource,
     updateSource,
     deleteSource

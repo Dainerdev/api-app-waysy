@@ -5,7 +5,7 @@ const getSources = async (req, res) => {
 
     try {
         const connection = await getConnection();
-        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%m-%Y'), nombre_fuente, descripcion, icono FROM fuentes");
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y'), nombre_fuente, descripcion, icono FROM fuentes");
         console.log(result);
         res.json(result);
     } catch (error) {
@@ -21,8 +21,8 @@ const getSourceById = async (req, res) => {
     try {
         const { id } = req.params;
         const connection = await getConnection();
-        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%m-%Y'), nombre_fuente, descripcion FROM fuentes WHERE id = ?", id);
-        res.json(result);
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y'), nombre_fuente, descripcion FROM fuentes WHERE id = ?", id);
+        res.json(result[0]);
     } catch (error) {
         res.status(500);
         res.send(error.message);
@@ -34,8 +34,58 @@ const getSourceByName = async (req, res) => {
     try {
         const { nombre_fuente } = req.params;
         const connection = await getConnection();
-        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%m-%Y'), nombre_fuente, descripcion FROM fuentes WHERE nombre_fuente = ?", [nombre_fuente]);
-        res.json(result);
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_fuente, descripcion FROM fuentes WHERE nombre_fuente = ?", [nombre_fuente]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get BY DATE function
+const getSourceByDate = async (req, res) => {
+    try {
+        const { fecha_recepcion } = req.params;
+        const connection = await getConnection();
+
+        const [day, monthAbbr, year] = fecha_recepcion.split(' ');
+        const monthMap = {
+            'Ene': '01',
+            'Feb': '02',
+            'Mar': '03',
+            'Abr': '04',
+            'May': '05',
+            'Jun': '06',
+            'Jul': '07',
+            'Ago': '08',
+            'Sep': '09',
+            'Oct': '10',
+            'Nov': '11',
+            'Dic': '12'
+        };
+
+        const month = monthMap[monthAbbr];
+        if (!month) {
+            return res.status(400).json({ error: 'Mes no válido en la fecha proporcionada.' });
+        }
+
+        const formattedDate = `${year}-${month}-${day}`;
+
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_fuente, descripcion FROM fuentes WHERE DATE(fecha_recepcion) = ?", [formattedDate]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get BY DESCRIPTION function
+const getSourceByDescription = async (req, res) => {
+    try {
+        const { descripcion } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_fuente, descripcion FROM fuentes WHERE descripcion LIKE ?", [`%${descripcion}%`]);
+        res.json(result[0]);
     } catch (error) {
         res.status(500);
         res.send(error.message);
@@ -111,6 +161,8 @@ export const methods = {
     getSources,
     getSourceById,
     getSourceByName,
+    getSourceByDate,
+    getSourceByDescription,
     addSource,
     updateSource,
     deleteSource

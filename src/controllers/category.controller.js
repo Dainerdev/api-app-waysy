@@ -22,7 +22,7 @@ const getCategoryById = async (req, res) => {
         const { id } = req.params;
         const connection = await getConnection();
         const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%m-%Y'), nombre_categoria, descripcion FROM categorias WHERE id = ?", id);
-        res.json(result);
+        res.json(result[0]);
     } catch (error) {
         res.status(500);
         res.send(error.message);

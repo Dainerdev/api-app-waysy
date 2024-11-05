@@ -21,7 +21,7 @@ const getEarningById = async (req, res) => {
         const { id } = req.params;
         const connection = await getConnection();
         const result = await connection.query("SELECT id, usuario_id, DATE_FORMAT(fecha_recepcion, '%d-%m-%Y'), nombre_ingreso, valor_ingreso, fuente_id FROM ingresos WHERE id = ?", id);
-        res.json(result);
+        res.json(result[0]);
     } catch (error) {
         res.status(500);
         res.send(error.message);

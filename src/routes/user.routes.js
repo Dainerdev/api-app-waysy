@@ -10,6 +10,7 @@ router.get("/typeId", userController.getTypeId); // Find enum TypeId
 router.get("/gender", userController.getGender); // Find enum Gender
 router.get("/role", userController.getRole); // Find enum Role
 router.get("/:id", userController.getUserById); // Find by id
+router.get("/question", userController.getUserById); // Find by id
 
 // POST
 router.post("/", userController.addUser); // Add

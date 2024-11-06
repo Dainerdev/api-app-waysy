@@ -60,7 +60,82 @@ const getActualEarnings = async (req, res) => {
     }
 };
 
+// Get BY NAME function
+const getEarningByName = async (req, res) => {
+    try {
+        const { nombre_ingreso } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_ingreso, valor_ingreso, fuente_id FROM ingresos WHERE nombre_ingreso = ?", [nombre_ingreso]);
+        res.json(result[0]);
+    } catch (error) {
+        console.log(error);
+        res.status(500);
+        res.send(error.message);
+    }
+};
 
+// Get BY DATE function
+const getEarningByDate = async (req, res) => {
+    try {
+        const { fecha_recepcion } = req.params;
+        const connection = await getConnection();
+
+        const [day, monthAbbr, year] = fecha_recepcion.split(' ');
+        const monthMap = {
+            'Ene': '01',
+            'Feb': '02',
+            'Mar': '03',
+            'Abr': '04',
+            'May': '05',
+            'Jun': '06',
+            'Jul': '07',
+            'Ago': '08',
+            'Sep': '09',
+            'Oct': '10',
+            'Nov': '11',
+            'Dic': '12'
+        };
+
+        const month = monthMap[monthAbbr];
+        if (!month) {
+            return res.status(400).json({ error: 'Mes no válido en la fecha proporcionada.' });
+        }
+
+        const formattedDate = `${year}-${month}-${day}`;
+
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_ingreso, valor_ingreso, fuente_id FROM ingresos WHERE DATE(fecha_recepcion) = ?", [formattedDate]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get BY Value function
+const getEarningByValue = async (req, res) => {
+    try {
+        const { valor_ingreso } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_ingreso, valor_ingreso, fuente_id FROM ingresos WHERE valor_ingreso = ?", [valor_ingreso]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get BY Source function
+const getEarningBySource = async (req, res) => {
+    try {
+        const { fuente_id } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_ingreso, valor_ingreso, fuente_id FROM ingresos WHERE fuente_id = ?", [fuente_id]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
 
 // POST function
 const addEarning = async (req, res) => {
@@ -92,15 +167,15 @@ const updateEarning = async (req, res) => {
 
         const { id } = req.params;
 
-        const {  nombre_ingreso, valor_ingreso, fuente_id, descripcion } = req.body;
+        const {  nombre_ingreso, valor_ingreso, fuente_id} = req.body;
 
         if ( nombre_ingreso === undefined || valor_ingreso === undefined ||
-            fuente_id === undefined || descripcion === undefined ) {
+            fuente_id === undefined ) {
             
             res.status(400).json({message: "Bad Request. Please fill all fields."});     
         }
 
-        const earing = { nombre_ingreso, valor_ingreso, fuente_id, descripcion };
+        const earing = { nombre_ingreso, valor_ingreso, fuente_id };
         console.log(earing);
         
         const connection = await getConnection();
@@ -131,6 +206,10 @@ export const methods = {
     getEarningById,
     getMaxId,
     getActualEarnings,
+    getEarningByName,
+    getEarningByDate,
+    getEarningByValue,
+    getEarningBySource,
     addEarning,
     updateEarning,
     deleteEarning

@@ -109,6 +109,21 @@ const getSourceByDescription = async (req, res) => {
     }
 };
 
+// Get Names
+const getSourceNames = async (req, res) => {
+
+    try {
+        const connection = await getConnection();
+        
+        const result = await connection.query("SELECT nombre_fuente FROM fuentes");
+        
+        const sourcesNames = result.map(row => row.nombre_fuente);
+        res.json(sourcesNames);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
 // POST function
 const addSource = async (req, res) => {
 
@@ -181,6 +196,7 @@ export const methods = {
     getSourceByDate,
     getSourceByDescription,
     getMaxId,
+    getSourceNames,
     addSource,
     updateSource,
     deleteSource

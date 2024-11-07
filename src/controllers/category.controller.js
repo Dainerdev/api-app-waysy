@@ -109,6 +109,21 @@ const getCategoryByDescription = async (req, res) => {
     }
 };
 
+// Get Names
+const getCategoryNames = async (req, res) => {
+
+    try {
+        const connection = await getConnection();
+        
+        const result = await connection.query("SELECT nombre_categoria FROM categorias");
+        
+        const categoriesNames = result.map(row => row.nombre_categoria);
+        res.json(categoriesNames);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
 // POST function
 const addCategory = async (req, res) => {
 
@@ -182,6 +197,7 @@ export const methods = {
     getCategoryByName,
     getCategoryByDate,
     getCategoryByDescription,
+    getCategoryNames,
     addCategory,
     updateCategory,
     deleteCategory

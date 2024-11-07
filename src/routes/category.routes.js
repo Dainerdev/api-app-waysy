@@ -9,6 +9,7 @@ router.get("/id/max", categoryController.getMaxId); // Get Max Id
 router.get("/name/:nombre_categoria", categoryController.getCategoryByName); // Find by Name
 router.get("/date/:fecha_recepcion", categoryController.getCategoryByDate); // Find by Date
 router.get("/description/:descripcion", categoryController.getCategoryByDescription); // Find by Description
+router.get("/names/values", categoryController.getCategoryNames); // Get Names
 
 router.post("/", categoryController.addCategory); // Add
 router.put("/:id", categoryController.updateCategory); // Edit

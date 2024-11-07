@@ -167,15 +167,15 @@ const updateExpense = async (req, res) => {
 
         const { id } = req.params;
 
-        const {  nombre_gasto, valor_gasto, categoria_id, descripcion } = req.body;
+        const { nombre_gasto, valor_gasto, categoria_id } = req.body;
 
         if ( nombre_gasto === undefined || valor_gasto === undefined ||
-            categoria_id === undefined || descripcion === undefined ) {
+            categoria_id === undefined) {
             
             res.status(400).json({message: "Bad Request. Please fill all fields."});     
         }
 
-        const gasto = { nombre_gasto, valor_gasto, categoria_id, descripcion };
+        const gasto = { nombre_gasto, valor_gasto, categoria_id };
         console.log(gasto);
         
         const connection = await getConnection();

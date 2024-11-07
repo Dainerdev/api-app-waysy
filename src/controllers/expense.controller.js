@@ -28,6 +28,23 @@ const getExpenseById = async (req, res) => {
     }
 };
 
+// Get max Id function
+const getMaxId = async (req, res) => {
+
+    try {
+        const connection = await getConnection();
+        const result = await connection.query("SELECT MAX(id) AS max_id FROM gastos");
+
+        if (result.length > 0 && result[0].max_id !== null) {
+            res.json({ max_id: result[0].max_id });   
+        } else {
+            res.json({ max_id: 1 }); 
+        }
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
 // POST function
 const addExpenses = async (req, res) => {
 
@@ -95,6 +112,7 @@ const deleteExpense = async (req, res) => {
 export const methods = {
     getExpenses,
     getExpenseById,
+    getMaxId,
     addExpenses,
     updateExpense,
     deleteExpense

@@ -60,6 +60,83 @@ const getActualExpenses = async (req, res) => {
     }
 };
 
+// Get BY NAME function
+const getExpensesByName = async (req, res) => {
+    try {
+        const { nombre_gasto } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_gasto, valor_gasto, categoria_id FROM gastos WHERE nombre_gasto = ?", [nombre_gasto]);
+        res.json(result[0]);
+    } catch (error) {
+        console.log(error);
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get BY DATE function
+const getExpensesByDate = async (req, res) => {
+    try {
+        const { fecha_recepcion } = req.params;
+        const connection = await getConnection();
+
+        const [day, monthAbbr, year] = fecha_recepcion.split(' ');
+        const monthMap = {
+            'Ene': '01',
+            'Feb': '02',
+            'Mar': '03',
+            'Abr': '04',
+            'May': '05',
+            'Jun': '06',
+            'Jul': '07',
+            'Ago': '08',
+            'Sep': '09',
+            'Oct': '10',
+            'Nov': '11',
+            'Dic': '12'
+        };
+
+        const month = monthMap[monthAbbr];
+        if (!month) {
+            return res.status(400).json({ error: 'Mes no válido en la fecha proporcionada.' });
+        }
+
+        const formattedDate = `${year}-${month}-${day}`;
+
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_gasto, valor_gasto, categoria_id FROM gastos WHERE DATE(fecha_recepcion) = ?", [formattedDate]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get BY Value function
+const getExpensesByValue = async (req, res) => {
+    try {
+        const { valor_gasto } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_gasto, valor_gasto, categoria_id FROM gastos WHERE valor_gasto = ?", [valor_gasto]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+// Get BY Source function
+const getExpensesByCategory = async (req, res) => {
+    try {
+        const { categoria_id } = req.params;
+        const connection = await getConnection();
+        const result = await connection.query("SELECT id, DATE_FORMAT(fecha_recepcion, '%d-%M-%Y') AS fecha_recepcion, nombre_gasto, valor_gasto, categoria_id FROM gastos WHERE categoria_id = ?", [categoria_id]);
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
 // POST function
 const addExpenses = async (req, res) => {
 
@@ -129,6 +206,10 @@ export const methods = {
     getExpenseById,
     getMaxId,
     getActualExpenses,
+    getExpensesByName,
+    getExpensesByDate,
+    getExpensesByValue,
+    getExpensesByCategory,
     addExpenses,
     updateExpense,
     deleteExpense

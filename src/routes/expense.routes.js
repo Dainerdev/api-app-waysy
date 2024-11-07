@@ -6,7 +6,7 @@ const router = Router();
 router.get("/", expenseController.getExpenses); // Find all
 router.get("/:id", expenseController.getExpenseById); // Find by id
 router.get("/id/max", expenseController.getMaxId); // Get Max Id
-
+router.get("/saldo/:id", expenseController.getActualExpenses); // Get Actual Expenses
 
 router.post("/", expenseController.addExpenses); // Add
 router.put("/:id", expenseController.updateExpense); // Edit

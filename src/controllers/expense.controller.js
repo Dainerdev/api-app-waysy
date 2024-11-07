@@ -45,6 +45,21 @@ const getMaxId = async (req, res) => {
     }
 };
 
+// Get Actual Expenses function
+const getActualExpenses = async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+        const connection = await getConnection();
+        const result = await connection.query("SELECT SUM(valor_gasto) AS saldo_actual FROM gastos WHERE usuario_id = ?", [id]);
+
+        res.json(result[0]);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
 // POST function
 const addExpenses = async (req, res) => {
 
@@ -113,6 +128,7 @@ export const methods = {
     getExpenses,
     getExpenseById,
     getMaxId,
+    getActualExpenses,
     addExpenses,
     updateExpense,
     deleteExpense
